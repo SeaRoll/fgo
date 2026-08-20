@@ -155,7 +155,7 @@ func TestCollectResult(t *testing.T) {
 			pulled := 0
 			stream := fgo.FromSeq(countingResultSeq(tc.items, &pulled))
 
-			values, err := fgo.CollectResult(stream).Tuple()
+			values, err := fgo.CollectResult(stream).Get()
 			if !slices.Equal(values, tc.wantValues) {
 				t.Errorf("CollectResult() values = %v, want %v", values, tc.wantValues)
 			}
@@ -191,7 +191,7 @@ func TestCollectResultFromMappedStream(t *testing.T) {
 				return fgo.Ok(n)
 			})
 
-			values, err := fgo.CollectResult(results).Tuple()
+			values, err := fgo.CollectResult(results).Get()
 			if !slices.Equal(values, tc.wantValues) {
 				t.Errorf("CollectResult() values = %v, want %v", values, tc.wantValues)
 			}

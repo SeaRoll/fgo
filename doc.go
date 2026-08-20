@@ -30,13 +30,13 @@
 // # Result
 //
 // Result carries a failure through a chain so each step does not have to check
-// for one. [ResultFromTuple] and [Result.Tuple] convert to and from the ordinary
+// for one. [ResultFromTuple] and [Result.Get] convert to and from the ordinary
 // Go (value, error) pair, so a chain can start and end in idiomatic code:
 //
 //	n, err := strconv.Atoi(raw)
 //	port, err := fgo.ResultFromTuple(n, err).
 //		MapErr(func(err error) error { return fmt.Errorf("parsing port: %w", err) }).
-//		Tuple()
+//		Get()
 //
 // [Result.TryMap] accepts the (U, error) shape that most Go functions already
 // return, and [Result.MapErr] is the hook for annotating a failure with context

@@ -15,7 +15,7 @@ type Result[T any] struct {
 // for wrapping the return of an ordinary function.
 //
 // When err is non-nil the resulting Result holds the error and discards val.
-// Result.Tuple performs the reverse conversion.
+// Result.Get performs the reverse conversion.
 func ResultFromTuple[T any](val T, err error) Result[T] {
 	if err != nil {
 		return Err[T](err)
@@ -40,12 +40,12 @@ func (r Result[T]) Err() error {
 	return r.err
 }
 
-// Tuple returns the contained value and error as the idiomatic Go pair, for
+// Get returns the contained value and error as the idiomatic Go pair, for
 // handing a Result back to ordinary error handling at the edge of a chain.
 //
 // The value is only meaningful when the error is nil. It is the inverse of
-// ResultFromTuple.
-func (r Result[T]) Tuple() (T, error) {
+// ResultFromTuple, and mirrors Option.Get.
+func (r Result[T]) Get() (T, error) {
 	return r.value, r.err
 }
 

@@ -27,7 +27,7 @@ func TestResultFromTuple(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			value, err := fgo.ResultFromTuple(tc.val, tc.err).Tuple()
+			value, err := fgo.ResultFromTuple(tc.val, tc.err).Get()
 			if value != tc.wantValue {
 				t.Errorf("ResultFromTuple(%d, %v) value = %d, want %d", tc.val, tc.err, value, tc.wantValue)
 			}
@@ -38,7 +38,7 @@ func TestResultFromTuple(t *testing.T) {
 	}
 }
 
-func TestResultTuple(t *testing.T) {
+func TestResultGet(t *testing.T) {
 	var zeroValue fgo.Result[int]
 
 	tests := []struct {
@@ -55,12 +55,12 @@ func TestResultTuple(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			value, err := tc.result.Tuple()
+			value, err := tc.result.Get()
 			if value != tc.wantValue {
-				t.Errorf("Tuple() value = %d, want %d", value, tc.wantValue)
+				t.Errorf("Get() value = %d, want %d", value, tc.wantValue)
 			}
 			if !errors.Is(err, tc.wantErr) {
-				t.Errorf("Tuple() err = %v, want %v", err, tc.wantErr)
+				t.Errorf("Get() err = %v, want %v", err, tc.wantErr)
 			}
 		})
 	}
@@ -162,7 +162,7 @@ func TestResultMap(t *testing.T) {
 			value, err := tc.result.Map(func(v int) string {
 				calls++
 				return strconv.Itoa(v)
-			}).Tuple()
+			}).Get()
 			if value != tc.wantValue {
 				t.Errorf("Map() value = %q, want %q", value, tc.wantValue)
 			}
@@ -198,7 +198,7 @@ func TestResultTryMap(t *testing.T) {
 			value, err := tc.result.TryMap(func(int) (string, error) {
 				calls++
 				return tc.returnValue, tc.returnErr
-			}).Tuple()
+			}).Get()
 			if value != tc.wantValue {
 				t.Errorf("TryMap() value = %q, want %q", value, tc.wantValue)
 			}
@@ -232,7 +232,7 @@ func TestResultFlatMap(t *testing.T) {
 			value, err := tc.result.FlatMap(func(int) fgo.Result[string] {
 				calls++
 				return tc.returns
-			}).Tuple()
+			}).Get()
 			if value != tc.wantValue {
 				t.Errorf("FlatMap() value = %q, want %q", value, tc.wantValue)
 			}
@@ -266,7 +266,7 @@ func TestResultMapErr(t *testing.T) {
 			value, err := tc.result.MapErr(func(err error) error {
 				calls++
 				return fmt.Errorf("wrapped: %w", err)
-			}).Tuple()
+			}).Get()
 			if value != tc.wantValue {
 				t.Errorf("MapErr() value = %d, want %d", value, tc.wantValue)
 			}
@@ -324,7 +324,7 @@ func TestResultChaining(t *testing.T) {
 				TryMap(strconv.Atoi).
 				Map(func(v int) int { return v * 2 }).
 				MapErr(func(err error) error { return fmt.Errorf("chain: %w", err) }).
-				Tuple()
+				Get()
 			if value != tc.wantValue {
 				t.Errorf("chain value = %d, want %d", value, tc.wantValue)
 			}

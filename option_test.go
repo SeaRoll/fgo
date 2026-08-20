@@ -263,12 +263,12 @@ func TestOptionOkOr(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			value, err := tc.option.OkOr(tc.err).Tuple()
+			value, err := tc.option.OkOr(tc.err).Get()
 			if value != tc.wantValue {
-				t.Errorf("OkOr().Tuple() value = %d, want %d", value, tc.wantValue)
+				t.Errorf("OkOr().Get() value = %d, want %d", value, tc.wantValue)
 			}
 			if !errors.Is(err, tc.wantErr) {
-				t.Errorf("OkOr().Tuple() err = %v, want %v", err, tc.wantErr)
+				t.Errorf("OkOr().Get() err = %v, want %v", err, tc.wantErr)
 			}
 		})
 	}
