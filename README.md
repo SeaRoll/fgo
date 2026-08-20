@@ -1,6 +1,6 @@
 # fgo
 
-Functional primitives for Go: `Option` for a value that may be absent, `Result` for a value that may have failed, and `Stream` for a lazy pipeline over a sequence.
+Functional primitives for Go with 0 dependencies: `Option` for a value that may be absent, `Result` for a value that may have failed, and `Stream` for a lazy pipeline over a sequence.
 
 Each type is a small wrapper whose methods chain, so a sequence of transformations reads top to bottom without an error check or a nil check between every step.
 
@@ -55,8 +55,8 @@ Nickname fgo.Option[string] `json:"nickname,omitzero"`
 // {"name":"bob"}   — the key disappears
 ```
 
-| Constructors                      | Methods                                                                         | JSON                                        |
-| --------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------- |
+| Constructors                      | Methods                                                                         | JSON                                     |
+| --------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------- |
 | `Some`, `None`, `OptionFromTuple` | `Get`, `Exists`, `UnwrapOr`, `UnwrapOrElse`, `Map`, `FlatMap`, `Filter`, `OkOr` | `MarshalJSON`, `UnmarshalJSON`, `IsZero` |
 
 ## Result
