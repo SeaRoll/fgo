@@ -61,7 +61,7 @@ Nickname fgo.Option[string] `json:"nickname,omitzero"`
 
 ## Result
 
-Carries a failure through a chain so each step does not have to check for one. `ResultFromTuple` and `Tuple` convert to and from the ordinary Go `(value, error)` pair, so a chain can start and end in idiomatic code.
+Carries a failure through a chain so each step does not have to check for one. `ResultFromTuple` and `Get` convert to and from the ordinary Go `(value, error)` pair, so a chain can start and end in idiomatic code.
 
 ```go
 n, err := strconv.Atoi(raw)
@@ -74,21 +74,21 @@ port, err := fgo.ResultFromTuple(n, err).
         }
         return fgo.Ok(n)
     }).
-    Tuple()
+    Get()
 ```
 
 `TryMap` accepts the `(U, error)` shape that most Go functions already return, so no wrapping is needed:
 
 ```go
-fgo.Ok("42").TryMap(strconv.Atoi).Tuple()  // 42, nil
-fgo.Ok("abc").TryMap(strconv.Atoi).Tuple() // 0, strconv.Atoi: parsing "abc": invalid syntax
+fgo.Ok("42").TryMap(strconv.Atoi).Get()  // 42, nil
+fgo.Ok("abc").TryMap(strconv.Atoi).Get() // 0, strconv.Atoi: parsing "abc": invalid syntax
 ```
 
 Wrap with `%w` in `MapErr` so `errors.Is` and `errors.As` keep working against the original error.
 
 | Constructors                   | Methods                                                                                |
 | ------------------------------ | -------------------------------------------------------------------------------------- |
-| `Ok`, `Err`, `ResultFromTuple` | `Err`, `Tuple`, `UnwrapOr`, `UnwrapOrElse`, `Map`, `TryMap`, `FlatMap`, `MapErr`, `Ok` |
+| `Ok`, `Err`, `ResultFromTuple` | `Err`, `Get`, `UnwrapOr`, `UnwrapOrElse`, `Map`, `TryMap`, `FlatMap`, `MapErr`, `Ok` |
 
 ## Stream
 
@@ -138,7 +138,7 @@ fgo.CollectResult(s)   // Stream[Result[T]] -> Result[[]T], fail-fast
 ```go
 results := fgo.ToStream(inputs).Map(parse)
 
-fgo.CollectResult(results).Tuple() // [1 2 3], nil  — or  [], first error
+fgo.CollectResult(results).Get() // [1 2 3], nil  — or  [], first error
 ```
 
 ## Notes

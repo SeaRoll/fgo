@@ -176,10 +176,10 @@ func ExampleOption_OkOr() {
 	errNotFound := errors.New("not found")
 
 	// A present value ignores the error entirely.
-	fmt.Println(fgo.Some(7).OkOr(errNotFound).Tuple())
+	fmt.Println(fgo.Some(7).OkOr(errNotFound).Get())
 
 	// An absent value becomes a failure worth reporting.
-	fmt.Println(fgo.None[int]().OkOr(errNotFound).Tuple())
+	fmt.Println(fgo.None[int]().OkOr(errNotFound).Get())
 	// Output:
 	// 7 <nil>
 	// 0 not found
@@ -199,9 +199,9 @@ func ExampleResult() {
 			})
 	}
 
-	fmt.Println(parsePort("8080").Tuple())
-	fmt.Println(parsePort("80").Tuple())
-	fmt.Println(parsePort("abc").Tuple())
+	fmt.Println(parsePort("8080").Get())
+	fmt.Println(parsePort("80").Get())
+	fmt.Println(parsePort("abc").Get())
 	// Output:
 	// 8080 <nil>
 	// 0 port must be above 1024
@@ -209,7 +209,7 @@ func ExampleResult() {
 }
 
 func ExampleOk() {
-	fmt.Println(fgo.Ok(42).Tuple())
+	fmt.Println(fgo.Ok(42).Get())
 
 	// A zero value is still a success.
 	fmt.Println(fgo.Ok(0).Err())
@@ -231,7 +231,7 @@ func ExampleErr() {
 func ExampleResultFromTuple() {
 	// Wraps the return of any function with an (T, error) signature.
 	n, err := strconv.Atoi("42")
-	fmt.Println(fgo.ResultFromTuple(n, err).Tuple())
+	fmt.Println(fgo.ResultFromTuple(n, err).Get())
 
 	// The value is discarded when the error is non-nil.
 	n, err = strconv.Atoi("nope")
@@ -249,12 +249,12 @@ func ExampleResult_Err() {
 	// disk full
 }
 
-func ExampleResult_Tuple() {
-	// Tuple hands a Result back to ordinary Go error handling.
-	value, err := fgo.Ok("config").Tuple()
+func ExampleResult_Get() {
+	// Get hands a Result back to ordinary Go error handling.
+	value, err := fgo.Ok("config").Get()
 	fmt.Printf("%q %v\n", value, err)
 
-	value, err = fgo.Err[string](errors.New("missing")).Tuple()
+	value, err = fgo.Err[string](errors.New("missing")).Get()
 	fmt.Printf("%q %v\n", value, err)
 	// Output:
 	// "config" <nil>
@@ -287,11 +287,11 @@ func ExampleResult_UnwrapOrElse() {
 func ExampleResult_Map() {
 	double := func(v int) string { return strconv.Itoa(v * 2) }
 
-	value, err := fgo.Ok(21).Map(double).Tuple()
+	value, err := fgo.Ok(21).Map(double).Get()
 	fmt.Printf("%q %v\n", value, err)
 
 	// The original error survives the change of element type.
-	value, err = fgo.Err[int](errors.New("no input")).Map(double).Tuple()
+	value, err = fgo.Err[int](errors.New("no input")).Map(double).Get()
 	fmt.Printf("%q %v\n", value, err)
 	// Output:
 	// "42" <nil>
@@ -300,8 +300,8 @@ func ExampleResult_Map() {
 
 func ExampleResult_TryMap() {
 	// TryMap accepts any func(T) (U, error), which most Go functions already are.
-	fmt.Println(fgo.Ok("42").TryMap(strconv.Atoi).Tuple())
-	fmt.Println(fgo.Ok("abc").TryMap(strconv.Atoi).Tuple())
+	fmt.Println(fgo.Ok("42").TryMap(strconv.Atoi).Get())
+	fmt.Println(fgo.Ok("abc").TryMap(strconv.Atoi).Get())
 	// Output:
 	// 42 <nil>
 	// 0 strconv.Atoi: parsing "abc": invalid syntax
@@ -316,8 +316,8 @@ func ExampleResult_FlatMap() {
 		return fgo.Ok(v)
 	}
 
-	fmt.Println(fgo.Ok(5).FlatMap(checkPositive).Tuple())
-	fmt.Println(fgo.Ok(-5).FlatMap(checkPositive).Tuple())
+	fmt.Println(fgo.Ok(5).FlatMap(checkPositive).Get())
+	fmt.Println(fgo.Ok(-5).FlatMap(checkPositive).Get())
 	// Output:
 	// 5 <nil>
 	// 0 must be positive
@@ -335,7 +335,7 @@ func ExampleResult_MapErr() {
 	fmt.Println(errors.Is(wrapped.Err(), errNotFound))
 
 	// A successful Result is left untouched.
-	fmt.Println(fgo.Ok(1).MapErr(func(error) error { return errNotFound }).Tuple())
+	fmt.Println(fgo.Ok(1).MapErr(func(error) error { return errNotFound }).Get())
 	// Output:
 	// loading user: not found
 	// true
@@ -643,10 +643,10 @@ func ExampleCollectResult() {
 		}))
 	}
 
-	fmt.Println(parseAll([]string{"1", "2", "3"}).Tuple())
+	fmt.Println(parseAll([]string{"1", "2", "3"}).Get())
 
 	// The first failure wins, and the values gathered before it are discarded.
-	fmt.Println(parseAll([]string{"1", "nope", "3"}).Tuple())
+	fmt.Println(parseAll([]string{"1", "nope", "3"}).Get())
 	// Output:
 	// [1 2 3] <nil>
 	// [] strconv.Atoi: parsing "nope": invalid syntax
